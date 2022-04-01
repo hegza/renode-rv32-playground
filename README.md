@@ -1,2 +1,3 @@
-# renode-rv32imc-playground
-A repo for experiments on a 32-bit RISC-V (IMC) platform.
+# renode-rv32-playground
+Experimentation on a 32-bit RISC-V platform on Renode.
+
