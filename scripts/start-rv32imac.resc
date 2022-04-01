@@ -3,6 +3,7 @@
 using sysbus
 
 mach create
+machine LoadPlatformDescription $ORIGIN/../platforms/common.repl
 machine LoadPlatformDescription $ORIGIN/../platforms/rv32imac-vexriscv.repl
 i $ORIGIN/setup-uart.resc
 

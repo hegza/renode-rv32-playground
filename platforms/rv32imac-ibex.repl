@@ -1,4 +1,4 @@
-cpu: CPU.VexRiscv @ sysbus
+cpu: CPU.IbexRiscV32 @ sysbus
     cpuType: "rv32imac"
     timeProvider: clint
 
