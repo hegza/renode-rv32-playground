@@ -1,0 +1,14 @@
+:Start a 32-bit RISC-V IMAC machine, and start executing the $bin binary
+
+using sysbus
+
+mach create
+machine LoadPlatformDescription $ORIGIN/../platforms/rv32imac-vexriscv.repl
+i $ORIGIN/setup-uart.resc
+
+showAnalyzer sysbus.uart
+
+macro reset
+"""
+    sysbus LoadELF $bin
+"""
