@@ -11,3 +11,4 @@ riscv = "0.7.0"
 riscv-rt = "0.8.1"
 uart_16550 = {version = "0.2.17", default-features = false, features = ["stable"]}
 common = {path="../common"}
+embedded-hal = "0.2.7"
