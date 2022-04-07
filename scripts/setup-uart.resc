@@ -1,2 +1,2 @@
-emulation CreateUartPtyTerminal "term" "/tmp/uart"
+emulation CreateUartPtyTerminal "term" "/tmp/uart" True
 connector Connect sysbus.uart term
