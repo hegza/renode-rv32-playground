@@ -19,3 +19,12 @@ pub fn init_uart() {
         SHARED.serial_port = Some(serial_port);
     }
 }
+
+// Write error to UART on panic
+use core::panic::PanicInfo;
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    sprintln!("{}", info);
+
+    loop {}
+}
