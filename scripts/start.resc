@@ -1,0 +1,18 @@
+:Start a 32-bit RISC-V machine.
+:
+:Parameters
+:- $platform := platform (basename from platforms/{basename}.repl)
+:- $bin := binary (full path)
+
+using sysbus
+
+mach create
+machine LoadPlatformDescription $platform_path
+i $ORIGIN/setup-uart.resc
+
+showAnalyzer sysbus.uart
+
+macro reset
+"""
+    sysbus LoadELF $bin
+"""

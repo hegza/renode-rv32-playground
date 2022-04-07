@@ -1,6 +1,12 @@
 #!/bin/sh
 set -x #echo on
 
+# Override platform here
+PLATFORM=rv32imac-vexriscv-plic
+
 BASEDIR=$(dirname "$0")
-BINARY=$1
-renode --console -e "include @$BASEDIR/../scripts/start-rv32imac.resc; set bin @$BINARY; runMacro \$reset; start;"
+BIN=${BIN=$1}
+
+PLATFORM_PATH=../platforms/${PLATFORM=rv32imac-vexriscv}.repl
+
+renode --console -e "set bin @$BIN; set platform_path @$PLATFORM_PATH; include @$BASEDIR/../scripts/start.resc; runMacro \$reset; start;"
