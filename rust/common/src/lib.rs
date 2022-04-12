@@ -1,5 +1,6 @@
 #![no_std]
 
+pub mod core_level_interruptor;
 mod println;
 
 use uart_16550::MmioSerialPort;
@@ -12,6 +13,7 @@ pub struct Shared {
 
 pub static mut SHARED: Shared = Shared { serial_port: None };
 
+/// Make sprintln work.
 pub fn init_uart() {
     let mut serial_port = unsafe { MmioSerialPort::new(SERIAL_PORT_BASE_ADDRESS) };
     serial_port.init();
