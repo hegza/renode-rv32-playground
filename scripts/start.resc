@@ -1,13 +1,14 @@
 :Start a 32-bit RISC-V machine.
 :
 :Parameters
-:- $platform := platform (basename from platforms/{basename}.repl)
-:- $bin := binary (full path)
+:- $platform_path := Platform. Basename without extension from platforms/{basename}.repl
+:- $bin := Binary. Full path, as received from `cargo run`)
 
 using sysbus
 
 mach create
 machine LoadPlatformDescription $platform_path
+
 i $ORIGIN/setup-uart.resc
 
 showAnalyzer sysbus.uart
@@ -16,3 +17,7 @@ macro reset
 """
     sysbus LoadELF $bin
 """
+
+machine StartGdbServer 3333
+runMacro $reset;
+start;
