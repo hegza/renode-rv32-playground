@@ -8,21 +8,18 @@ ram: Memory.MappedMemory @ {
 cpu: CPU.IbexRiscV32 @ sysbus
     cpuType: "rv32imac"
     timeProvider: clint
+    allowUnalignedAccesses: false
 
 clint: IRQControllers.CoreLevelInterruptor @ sysbus 0xF0010000
+    // This matches with default core frequency
     frequency: 100000000
+    // Number of HARTs
     numberOfTargets: 1
+    // Connect IPI (0) to msip (3)
+    // Connect timer (1) to mtip (7)
     [0, 1] -> cpu@[3, 7]
 
 uart: UART.NS16550 @ {
         sysbus 0x60001800;
         sysbus 0xE0001800 // shadow
     }
-    -> cpu@2
-
-timer0: Timers.LiteX_Timer @ {
-        sysbus 0x60002800;
-        sysbus 0xE0002800 // shadow
-    }
-    frequency: 100000000
-    -> cpu@1
