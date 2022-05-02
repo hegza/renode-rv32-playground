@@ -42,6 +42,70 @@ ivt:
     j   platform_irq15;
     */
 
+// Stores the stack frame of context
+.macro STORE_FRAME
+    //  Allocate space in stack
+    addi sp, sp, -17*4
+
+    sw x1, 0*4(sp)      // ra, return address
+    sw x4, 1*4(sp)      // tp, thread pointer
+    sw x5, 2*4(sp)      // t0, alternate link register
+
+    // t1-t2, temporary registers
+    sw x6, 3*4(sp)
+    sw x7, 4*4(sp)
+
+    // a0-a1, function argument, return value registers
+    sw x10, 5*4(sp)
+    sw x11, 6*4(sp)
+
+    // a2-a7, function argument registers
+    sw x12, 7*4(sp)
+    sw x13, 8*4(sp)
+    sw x14, 9*4(sp)
+    sw x15, 10*4(sp)
+    sw x16, 11*4(sp)
+    sw x17, 12*4(sp)
+
+    // t3-t6 temporary registers
+    sw x28, 13*4(sp)
+    sw x29, 14*4(sp)
+    sw x30, 15*4(sp)
+    sw x31, 16*4(sp)
+.endm
+
+// Restores the stack frame of context
+.macro RESTORE_FRAME
+    lw x1, 0*4(sp)      // ra, return address
+    lw x4, 1*4(sp)      // tp, thread pointer
+    lw x5, 2*4(sp)      // t0, alternate link register
+
+    // t1-t2, temporary registers
+    lw x6, 3*4(sp)
+    lw x7, 4*4(sp)
+
+    // a0-a1, function argument, return value registers
+    lw x10, 5*4(sp)
+    lw x11, 6*4(sp)
+
+    // a2-a7, function argument registers
+    lw x12, 7*4(sp)
+    lw x13, 8*4(sp)
+    lw x14, 9*4(sp)
+    lw x15, 10*4(sp)
+    lw x16, 11*4(sp)
+    lw x17, 12*4(sp)
+
+    // t3-t6 temporary registers
+    lw x28, 13*4(sp)
+    lw x29, 14*4(sp)
+    lw x30, 15*4(sp)
+    lw x31, 16*4(sp)
+
+    // De-allocate the stack space
+    addi sp, sp, 17*4
+.endm
+
 /*
     Machine software interrupt trampoline
 
@@ -50,20 +114,11 @@ ivt:
 .align 4
 .global _msi_trampoline
 _msi_trampoline:
-    // Save return address on stack
-    addi sp, sp, -2*4
-    sw ra, 0*4(sp)
-    sw t0, 1*4(sp)
-
     // Surround interrupt handler with store/load frame
-    jal t0, _store_frame
+    STORE_FRAME
     jal ra, msoft
-    jal t0, _load_frame
+    RESTORE_FRAME
 
-    // Pop return address from stack
-    lw ra, 0*4(sp)
-    lw t0, 1*4(sp)
-    addi sp, sp, 2*4
     mret
 
 /*
@@ -74,73 +129,12 @@ _msi_trampoline:
 .align 4
 .global _mti_trampoline
 _mti_trampoline:
-    // Save return address on stack
-    addi sp, sp, -2*4
-    sw ra, 0*4(sp)
-    sw t0, 1*4(sp)
-
     // Surround interrupt handler with store/load frame
-    jal t0, _store_frame
+    STORE_FRAME
     jal ra, mtimer
-    jal t0, _load_frame
+    RESTORE_FRAME
 
-    // Pop return address from stack
-    lw ra, 0*4(sp)
-    lw t0, 1*4(sp)
-    addi sp, sp, 2*4
     mret
-
-// Stores the stack frame, reserving alternate link register (x5/t0) for the
-// return address as per RISC-V standard calling convention.
-.align 4
-.global _store_frame
-_store_frame:
-    addi sp, sp, -14*4
-
-    // DO NOT STORE ra  // return address
-    // DO NOT STORE t0  // alternate link register
-    sw t1, 0*4(sp)      // temporary #1
-    sw t2, 1*4(sp)      // temporary #2
-    sw t3, 2*4(sp)      // temporary #3
-    sw t4, 3*4(sp)      // temporary #4
-    sw t5, 4*4(sp)      // temporary #5
-    sw t6, 5*4(sp)      // temporary #6
-    sw a0, 6*4(sp)      // function arguments / return values
-    sw a1, 7*4(sp)      // function arguments / return values
-    sw a2, 8*4(sp)      // function arguments
-    sw a3, 9*4(sp)      // function arguments
-    sw a4, 10*4(sp)     // function arguments
-    sw a5, 11*4(sp)     // function arguments
-    sw a6, 12*4(sp)     // function arguments
-    sw a7, 13*4(sp)     // function arguments
-
-    jr t0
-
-// Restores the stack frame, reserving alternate link register (x5/t0) for the
-// return address as per RISC-V standard calling convention.
-.align 4
-.global _load_frame
-_load_frame:
-    // DO NOT LOAD ra   // return address
-    // DO NOT LOAD t0   // alternate link register
-    lw t1, 0*4(sp)
-    lw t2, 1*4(sp)
-    lw t3, 2*4(sp)
-    lw t4, 3*4(sp)
-    lw t5, 4*4(sp)
-    lw t6, 5*4(sp)
-    lw a0, 6*4(sp)
-    lw a1, 7*4(sp)
-    lw a2, 8*4(sp)
-    lw a3, 9*4(sp)
-    lw a4, 10*4(sp)
-    lw a5, 11*4(sp)
-    lw a6, 12*4(sp)
-    lw a7, 13*4(sp)
-
-    addi sp, sp, 14*4
-    jr t0
-
 
 /*
     Exception handler
