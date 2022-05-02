@@ -5,6 +5,9 @@ bin := "target/riscv32imac-unknown-none-elf/debug/interrupts-playground"
 default:
     just --help
 
+run:
+    cargo run
+
 tio:
     tio /tmp/uart -e -m INLCRNL
 
