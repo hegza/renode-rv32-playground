@@ -5,8 +5,10 @@
  */
 .option norvc
 
-//.section .vectors
 .global ivt
+// Align the vector table to a multiple of 4 bytes. This ensures the last two bits of the address
+// are 0, which is mandated by the structure of the mtvec as specified in RISC-V.
+.align 4
 ivt:
     .org  ivt + 0*4;
     j   _exception_trampoline;  /* 0 */
