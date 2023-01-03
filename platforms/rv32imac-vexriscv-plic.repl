@@ -5,7 +5,6 @@ ram: Memory.MappedMemory @ {
     // 256 MeB
     size: 0x10000000
 
-// VexRiscV doesn't seem to have interrupts enabled by default
 cpu: CPU.VexRiscv @ sysbus
     cpuType: "rv32imac"
     timeProvider: clint
@@ -17,20 +16,12 @@ clint: IRQControllers.CoreLevelInterruptor @ sysbus 0xF0010000
     [0, 1] -> cpu@[3, 7]
 
 plic: IRQControllers.PlatformLevelInterruptController @ sysbus 0x50000000
-    0 -> cpu@11
+    0 -> cpu@1
+    // 31 "based on release notes"
     numberOfSources: 31
     numberOfContexts: 1
-    prioritiesEnabled : false
 
 uart: UART.NS16550 @ {
         sysbus 0x60001800;
         sysbus 0xE0001800 // shadow
     }
-    -> cpu@2
-
-timer0: Timers.LiteX_Timer @ {
-        sysbus 0x60002800;
-        sysbus 0xE0002800 // shadow
-    }
-    frequency: 100000000
-    -> cpu@1

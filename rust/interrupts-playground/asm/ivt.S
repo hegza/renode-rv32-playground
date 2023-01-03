@@ -2,6 +2,9 @@
  *  Enables or disables the generation of compressed instructions. Instructions are
  *  opportunistically compressed by the RISC-V assembler when possible, but sometimes this behavior
  *  is not desirable.
+ *
+ * This isn't necessary when we have a single trap vector, but is useful to ensure memory addresses
+ * start with a multiple of 4 bytes when using multiple vectors.
  */
 .option norvc
 
