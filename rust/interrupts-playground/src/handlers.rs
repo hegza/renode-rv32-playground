@@ -6,7 +6,7 @@ use crate::{CLINT, CORE_FREQ};
 /// 3: RISC-V specification for smclic (CLIC ) says msip/msoft is interrupt id 3
 #[no_mangle]
 pub unsafe fn msoft() {
-    riscv::interrupt::free(|_| {
+    riscv::interrupt::free(|| {
         let this_pc = mepc::read();
 
         // The UART type for printing comes from external context. I think the fact that this
@@ -14,8 +14,6 @@ pub unsafe fn msoft() {
         sprintln!("msi, mepc: 0x{:x}", this_pc);
 
         CLINT::complete(0);
-        // This doesn't seem to be necessary, but we do it anyway
-        mip::clear_msoft();
     });
 }
 
@@ -23,7 +21,7 @@ pub unsafe fn msoft() {
 /// 7: RISC-V specification for smclic (CLIC ) says mtip is interrupt id 7
 #[no_mangle]
 pub unsafe fn mtimer() {
-    riscv::interrupt::free(|_| {
+    riscv::interrupt::free(|| {
         let this_pc = mepc::read();
 
         // The UART type for printing comes from external context. I think the fact that this
@@ -32,8 +30,6 @@ pub unsafe fn mtimer() {
 
         let seconds = 1;
         CLINT::set_time_cmp(0, CLINT::time() + CORE_FREQ as u64 * seconds);
-        // This doesn't seem to be necessary, but we do it anyway
-        mip::clear_mtimer();
     });
 }
 

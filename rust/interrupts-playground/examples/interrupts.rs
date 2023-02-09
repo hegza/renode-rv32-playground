@@ -19,29 +19,25 @@ pub type CLINT = common::core_level_interruptor::CoreLevelInterruptor<0xF001_000
 /// Machine software interrupt
 #[no_mangle]
 pub unsafe fn msoft() {
-    riscv::interrupt::free(|_| {
+    riscv::interrupt::free(|| {
         // The UART type for printing comes from external context. I think the fact that this
         // works is UB :) The UART doesn't contain any variables so it works.
         sprintln!("msoft called");
 
         CLINT::complete(0);
-        // This doesn't seem to be necessary, but we do it anyway
-        mip::clear_msoft();
     });
 }
 
 /// Machine timer interrupt
 #[no_mangle]
 pub unsafe fn mtimer() {
-    riscv::interrupt::free(|_| {
+    riscv::interrupt::free(|| {
         // The UART type for printing comes from external context. I think the fact that this
         // works is UB :) The UART doesn't contain any variables so it works.
         sprintln!("mtimer called");
 
         let seconds = 1;
         CLINT::set_time_cmp(0, CLINT::time() + CORE_FREQ as u64 * seconds);
-        // This doesn't seem to be necessary, but we do it anyway
-        mip::clear_mtimer();
     });
 }
 

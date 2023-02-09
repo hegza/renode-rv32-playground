@@ -3,3 +3,7 @@ members = [
     "interrupts-playground",
     "common"
 ]
+
+[workspace.dependencies]
+riscv = "0.10"
+riscv-rt = "0.11"
